@@ -6,6 +6,8 @@
 #include "BaseCharacter.h"
 #include "PlayerCharacter.generated.h"
 
+class APlayerGun;
+
 /**
  * 
  */
@@ -37,6 +39,13 @@ public:
 	*/
 	void LookRight(float value);
 
+	/** Rotates the player according to the direction specified in LookUp and LookRight.
+	* @param LookDirection - The direction for the player to look.
+	*/
+	void LookInDirection(FVector& LookDirection);
+
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -48,4 +57,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+private:
+	// Gun to spawn and attach to player.
+	UPROPERTY(EditAnywhere, Category = "PlayerCharacter")
+	TSubclassOf<class APlayerGun> PlayerGunToSpawn;
+
+	// The weapon that the player utilizes.
+	APlayerGun* PlayerGun;
 };

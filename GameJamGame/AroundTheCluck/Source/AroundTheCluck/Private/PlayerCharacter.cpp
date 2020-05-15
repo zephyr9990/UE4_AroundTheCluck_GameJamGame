@@ -2,7 +2,11 @@
 
 
 #include "PlayerCharacter.h"
+#include "PlayerGun.h"
 #include "Components/InputComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -11,11 +15,25 @@ APlayerCharacter::APlayerCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	PlayerGunToSpawn = nullptr;
+	PlayerGun = nullptr;
 }
 
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (PlayerGunToSpawn)
+	{
+		// Spawn gun
+		FTransform GunSpawnTransform = GetMesh()->GetComponentTransform();
+		PlayerGun = GetWorld()->SpawnActor<APlayerGun>(PlayerGunToSpawn, GunSpawnTransform);
+
+		// Attach to gun socket.
+		const USkeletalMeshSocket* GunSocket = GetMesh()->GetSocketByName("GunSocket");
+		GunSocket->AttachActor(PlayerGun, GetMesh());
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -59,12 +77,16 @@ void APlayerCharacter::LookUp(float value)
 	if (Controller && value)
 	{
 		FVector Up = FVector(value, 0.0f, 0.0f);
-		if (Up.Size() > 0.25f)
+		float RightValue = GetInputAxisValue("LookRight");
+		FVector LookDirection = FVector(value, RightValue, 0.0f);
+		if (LookDirection.Size() > 0.25f)
 		{
-			float RightValue = GetInputAxisValue("LookRight");
-			FVector LookDirection = FVector(value, RightValue, 0.0f);
-			FRotator NewRotation = UKismetMathLibrary::MakeRotFromX(LookDirection);
-			Controller->SetControlRotation(NewRotation);
+			LookInDirection(LookDirection);
+			PlayerGun->PullTrigger();
+		}
+		else
+		{
+			PlayerGun->ReleaseTrigger();
 		}
 	}
 }
@@ -75,12 +97,23 @@ void APlayerCharacter::LookRight(float value)
 	if (Controller && value)
 	{
 		FVector Right = FVector(0.0f, value, 0.0f);
-		if (Right.Size() > 0.25f)
+		float UpValue = GetInputAxisValue("LookUp");
+		FVector LookDirection = FVector(UpValue, value, 0.0f);
+		if (LookDirection.Size() > 0.25f)
 		{
-			float UpValue = GetInputAxisValue("LookUp");
-			FVector LookDirection = FVector(UpValue, value, 0.0f);
-			FRotator NewRotation = UKismetMathLibrary::MakeRotFromX(LookDirection);
-			Controller->SetControlRotation(NewRotation);
+			LookInDirection(LookDirection);
+			PlayerGun->PullTrigger();
+		}
+		else
+		{
+			PlayerGun->ReleaseTrigger();
 		}
 	}
+}
+
+void APlayerCharacter::LookInDirection(FVector& LookDirection)
+{
+
+	FRotator NewRotation = UKismetMathLibrary::MakeRotFromX(LookDirection);
+	Controller->SetControlRotation(NewRotation);
 }
