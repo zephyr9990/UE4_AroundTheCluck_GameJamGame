@@ -45,6 +45,6 @@ void ABaseCharacter::CalculateDead()
 
 void ABaseCharacter::CalculateHealth(float DamageAmount)
 {
-	Health -= DamageAmount;
+	Health += DamageAmount;
 	CalculateDead();
 }

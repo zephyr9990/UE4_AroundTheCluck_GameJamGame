@@ -21,11 +21,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Base Character")
 		bool bIsDead = false;
 
+
+	UFUNCTION(BlueprintCallable, Category = "Base Character")
 	/** Returns whether or not the character is dead.
 	* @return Where the character is dead or not.
 	*/
 	virtual void CalculateDead();
 
+	UFUNCTION(BlueprintCallable, Category = "Base Character")
 	/** Subtracts the amount of damage taken from health.
 	* @param DamageAmount - The amount of damage to be received by this character.
 	*/

@@ -5,7 +5,10 @@
 #include "Components/ArrowComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 #include "TimerManager.h"
+
 
 // Sets default values
 APlayerGun::APlayerGun()
@@ -17,6 +20,7 @@ APlayerGun::APlayerGun()
 
 	Firing = false;
 	ProjectileToSpawn = nullptr;
+	GunSoundVolumeMultiplier = .6f;
 }
 
 // Called when the game starts or when spawned
@@ -47,8 +51,11 @@ void APlayerGun::PullTrigger()
 
 void APlayerGun::Fire()
 {
-	if (ProjectileSpawnPoint)
+	// If there is a spawn point, spawn projectiles there.
+	if (ProjectileSpawnPoint && GunSound)
 	{
+		ShowMuzzleFlash();
+		UGameplayStatics::PlaySoundAtLocation(this, GunSound, ProjectileSpawnPoint->GetComponentLocation(), GunSoundVolumeMultiplier);
 		FTransform ProjectileSpawnTransform = ProjectileSpawnPoint->GetComponentTransform();
 		GetWorld()->SpawnActor<AActor>(ProjectileToSpawn, ProjectileSpawnTransform);
 	}

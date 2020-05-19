@@ -74,7 +74,7 @@ void APlayerCharacter::MoveRight(float value)
 
 void APlayerCharacter::LookUp(float value)
 {
-	if (Controller && value)
+	if (Controller)
 	{
 		FVector Up = FVector(value, 0.0f, 0.0f);
 		float RightValue = GetInputAxisValue("LookRight");
@@ -94,7 +94,7 @@ void APlayerCharacter::LookUp(float value)
 
 void APlayerCharacter::LookRight(float value)
 {
-	if (Controller && value)
+	if (Controller)
 	{
 		FVector Right = FVector(0.0f, value, 0.0f);
 		float UpValue = GetInputAxisValue("LookUp");

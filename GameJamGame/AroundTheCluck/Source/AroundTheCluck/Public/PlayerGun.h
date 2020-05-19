@@ -29,6 +29,10 @@ public:
 	// Function that stops spawning projectiles.
 	void ReleaseTrigger();
 
+	// Shows muzzle flash when gun is fired.
+	UFUNCTION(BlueprintImplementableEvent)
+	void ShowMuzzleFlash();
+
 	// Used to keep track of the projectile spawn point.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 		UArrowComponent* ProjectileSpawnPoint;
@@ -51,9 +55,15 @@ private:
 	// Used to keep track of the timer set by PullTrigger().
 	FTimerHandle FiringHandle;
 
+	// The projectile that this gun spawns.
 	UPROPERTY(EditAnywhere, Category = "Player Gun")
 	TSubclassOf<class AActor> ProjectileToSpawn;
 
+	// The sound that this gun makes when it fires a projectile.
 	UPROPERTY(EditAnywhere, Category = "Player Gun")
 	USoundCue* GunSound; 
+
+	// The multiplier for the sound this gun makes.
+	UPROPERTY(EditAnywhere, Category = "Player Gun")
+	float GunSoundVolumeMultiplier;
 };
