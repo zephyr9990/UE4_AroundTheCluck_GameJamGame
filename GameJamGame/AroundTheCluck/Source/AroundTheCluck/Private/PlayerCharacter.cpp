@@ -8,6 +8,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -18,6 +19,13 @@ APlayerCharacter::APlayerCharacter()
 
 	PlayerGunToSpawn = nullptr;
 	PlayerGun = nullptr;
+	bCanShoot = true;
+	bCameraClamped = false;
+
+	XAxisMin = 0.0f;
+	XAxisMax = 0.0f;
+	YAxisMin = 0.0f;
+	YAxisMax = 0.0f;
 }
 
 void APlayerCharacter::BeginPlay()
@@ -82,7 +90,10 @@ void APlayerCharacter::LookUp(float value)
 		if (LookDirection.Size() > 0.25f)
 		{
 			LookInDirection(LookDirection);
-			PlayerGun->PullTrigger();
+			if (bCanShoot)
+			{
+				PlayerGun->PullTrigger();
+			}
 		}
 		else
 		{
@@ -102,7 +113,10 @@ void APlayerCharacter::LookRight(float value)
 		if (LookDirection.Size() > 0.25f)
 		{
 			LookInDirection(LookDirection);
-			PlayerGun->PullTrigger();
+			if (bCanShoot)
+			{
+				PlayerGun->PullTrigger();
+			}
 		}
 		else
 		{
@@ -116,4 +130,17 @@ void APlayerCharacter::LookInDirection(FVector& LookDirection)
 
 	FRotator NewRotation = UKismetMathLibrary::MakeRotFromX(LookDirection);
 	Controller->SetControlRotation(NewRotation);
+}
+
+void APlayerCharacter::ClampCamera(USpringArmComponent* CameraBoom)
+{
+	if (CameraBoom) 
+	{
+		FVector CameraBoomLocation = CameraBoom->GetComponentLocation();
+		float XClampedValue = UKismetMathLibrary::FClamp(GetActorLocation().X, XAxisMin, XAxisMax);
+		float YClampedValue = UKismetMathLibrary::FClamp(GetActorLocation().Y, YAxisMin, YAxisMax);
+
+		FVector ClampedLocation = FVector(XClampedValue, YClampedValue, CameraBoomLocation.Z);
+		CameraBoom->SetWorldLocation(ClampedLocation);
+	}
 }

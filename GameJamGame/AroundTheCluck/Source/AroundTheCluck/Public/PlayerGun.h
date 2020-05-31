@@ -27,6 +27,7 @@ public:
 	void Fire();
 
 	// Function that stops spawning projectiles.
+	UFUNCTION(BlueprintCallable, Category = "PlayerGun")
 	void ReleaseTrigger();
 
 	// Shows muzzle flash when gun is fired.
@@ -34,7 +35,7 @@ public:
 	void ShowMuzzleFlash();
 
 	// Used to keep track of the projectile spawn point.
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlayerGun")
 		UArrowComponent* ProjectileSpawnPoint;
 protected:
 	// Called when the game starts or when spawned

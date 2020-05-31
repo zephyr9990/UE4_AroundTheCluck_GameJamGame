@@ -7,6 +7,7 @@
 #include "PlayerCharacter.generated.h"
 
 class APlayerGun;
+class USpringArmComponent;
 
 /**
  * 
@@ -44,7 +45,21 @@ public:
 	*/
 	void LookInDirection(FVector& LookDirection);
 
+	/** Clamps the camera of the actor */
+	UFUNCTION(BlueprintCallable, Category = "PlayerCharacter")
+		void ClampCamera(USpringArmComponent* CameraBoom);
 
+	// The weapon that the player utilizes.
+	UPROPERTY(BlueprintReadOnly, Category = "PlayerCharacter")
+		APlayerGun* PlayerGun;
+
+	// Tracks whether the player is repairing a fence or not.
+	UPROPERTY(BlueprintReadWrite, Category = "PlayerCharacter")
+		bool bCanShoot;
+
+	// Whether the camera becomes clamped or not.
+	UPROPERTY(BlueprintReadWrite, Category = "PlayerCharacter")
+		bool bCameraClamped;
 
 protected:
 	// Called when the game starts or when spawned
@@ -62,6 +77,17 @@ private:
 	UPROPERTY(EditAnywhere, Category = "PlayerCharacter")
 	TSubclassOf<class APlayerGun> PlayerGunToSpawn;
 
-	// The weapon that the player utilizes.
-	APlayerGun* PlayerGun;
+	// Clamped values;
+	UPROPERTY(EditAnywhere, Category = "PlayerCharacter")
+		float XAxisMin;
+
+	UPROPERTY(EditAnywhere, Category = "PlayerCharacter")
+		float XAxisMax;
+
+
+	UPROPERTY(EditAnywhere, Category = "PlayerCharacter")
+		float YAxisMin;
+
+	UPROPERTY(EditAnywhere, Category = "PlayerCharacter")
+		float YAxisMax;
 };
